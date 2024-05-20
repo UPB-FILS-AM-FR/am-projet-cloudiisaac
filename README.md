@@ -41,11 +41,9 @@ Integration into home automation systems for intelligent automation, etc
 ### Block diagram
 
 <!-- Make sure the path to the picture is correct -->
-![Block Diagram](schematics/block_diagram.png) https://www.tinkercad.com/things/2SMvaSbqaCq-mon-projet
-
+[digram](diagramme.jpeg)
 ### Schematic
-
-![Schematic](schematics/kicad_schematic.png) https://www.tinkercad.com/things/2SMvaSbqaCq-mon-projet
+![alt text](Shematic.jpeg)
 
 ### Components
 A light source (bulb, LED, etc.).
