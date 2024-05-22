@@ -1,0 +1,64 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Initialise l'écran LCD I2C avec l'adresse I2C (par exemple 0x27)
+// et les dimensions 16 caractères et 2 lignes
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+const int ledPins[] = {3, 5, 7, 9, 11, 13}; // Pins pour les LEDs
+const int buttonPins[] = {2, 4, 6, 8, 10, 12}; // Pins pour les boutons
+const int numButtons = 6;
+int buttonState[numButtons];
+int lastButtonState[numButtons] = {LOW, LOW, LOW, LOW, LOW, LOW};
+int score = 0;
+int attempts = 0;
+const int maxAttempts = 10;
+unsigned long lastDebounceTime[numButtons] = {0, 0, 0, 0, 0, 0};
+unsigned long debounceDelay = 50;
+
+void setup() {
+  lcd.init();                      // initialise l'écran LCD
+  lcd.backlight();                 
+  lcd.print("Score: 0");
+  for (int i = 0; i < numButtons; i++) {
+    pinMode(ledPins[i], OUTPUT);
+    pinMode(buttonPins[i], INPUT);
+  }
+}
+
+void loop() {
+  if (attempts < maxAttempts) {
+    int led = random(0, numButtons);
+    digitalWrite(ledPins[led], HIGH);
+    delay(1000);
+    digitalWrite(ledPins[led], LOW);
+    attempts++;
+
+    for (int i = 0; i < numButtons; i++) {
+      int reading = digitalRead(buttonPins[i]);
+      if (reading != lastButtonState[i]) {
+        lastDebounceTime[i] = millis();
+      }
+      if ((millis() - lastDebounceTime[i]) > debounceDelay) {
+        if (reading != buttonState[i]) {
+          buttonState[i] = reading;
+          if (buttonState[i] == HIGH && i == led) {
+            score++;
+            lcd.setCursor(7, 0);
+            lcd.print(score);
+          }
+        }
+      }
+      lastButtonState[i] = reading;
+    }
+  } else {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Game Over");
+    lcd.setCursor(0, 1);
+    lcd.print("Final Score: ");
+    lcd.print(score);
+    delay(5000); // Affiche le score final pendant 5 secondes
+    return; // Termine le programme
+  }
+}
